@@ -1,0 +1,19 @@
+﻿@model InventarioTI.Models.CatalogoDpto
+
+@{
+    ViewData["Title"] = "Editar Departamento";
+}
+
+<h2>Editar Departamento</h2>
+
+<form asp-action="Editar" method="post">
+    <div>
+        <label>Nombre del Departamento:</label>
+        <input type="text" name="Nombre" value="@Model.Departamento" required />
+        <input type="hidden" name="Id" value="@Model.IdDpto" />
+    </div>
+    <button type="submit">Guardar Cambios</button>
+</form>
+
+<a href="@Url.Action("Index")">Volver al Catálogo</a>
+

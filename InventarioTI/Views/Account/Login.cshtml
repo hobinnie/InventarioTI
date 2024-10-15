@@ -1,0 +1,64 @@
+﻿@model InventarioTI.Models.Usuario
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+
+    <div class="login-container d-flex justify-content-center align-items-center">
+        <div class="login-box shadow">
+
+            <!-- Logo de la empresa -->
+            <div class="text-center mb-4">
+                <img src="~/images/login.png" alt="Logo Empresa" class="logo">
+            </div>
+
+            <!-- Título de la tarjeta -->
+            <div class="card-header text-center">
+                Iniciar Sesión
+            </div>
+
+            <!-- Cuerpo del formulario -->
+            <div class="card-body">
+                <form asp-controller="Inicio" asp-action="IniciarSesion" method="post">
+
+                    <!-- Campo del Usuario -->
+                    <label for="NombreUsuario">Nombre de Usuario:</label>
+                    <input class="form-control mb-3" type="text" placeholder="Usuario" required name="Nombre_usuario" />
+
+                    <!-- Campo de la Contraseña -->
+                    <label for="Contraseña">Contraseña</label>
+                    <input class="form-control mb-3" type="password" placeholder="Contraseña" required name="contraseña" />
+
+                    <!-- Botón de Iniciar Sesión -->
+                    <div class="d-grid mb-3">
+                        <button class="btn btn-login" type="submit">Iniciar Sesión</button>
+                    </div>
+
+                    <!-- Mensaje de error -->
+                    @if (ViewData["Mensaje"] != null)
+                    {
+                        <div class="alert alert-danger text-center" role="alert">
+                            @ViewData["Mensaje"]
+                        </div>
+                    }
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

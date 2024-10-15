@@ -1,0 +1,23 @@
+﻿@model InventarioTI.Models.CatalogoDpto
+@{
+    ViewData["Title"] = "Crear nuevo Departamento";
+}
+
+<h2>Eliminar Departamento</h2>
+
+<p>¿Estás seguro de que deseas eliminar este departamento?</p>
+
+<div>
+    <h3>@Model.Departamento</h3>
+    <dl class="row">
+
+    </dl>
+</div>
+
+<form asp-action="Eliminar">
+    <input type="hidden" asp-for="IdDpto" />
+    <button type="submit" class="btn btn-danger">Eliminar Departamento</button>
+    <button> href="@Url.Action("Index")" class="btn btn-secondary">Cancelar</button>
+</form>
+
+<button> href="@Url.Action("Index")">Volver al Catálogo</button>

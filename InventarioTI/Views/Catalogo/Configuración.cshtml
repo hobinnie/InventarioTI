@@ -1,0 +1,37 @@
+﻿@model List<string>
+
+@{
+    ViewData["Title"] = "Usuarios";
+    Layout = null;
+}
+
+<!-- Referencia al archivo de estilos -->
+<link rel="stylesheet" href="~/css/Catalogo.css" />
+
+<h2>Administración de Usuarios</h2>
+
+<!-- Formulario para agregar un nuevo usuario -->
+<form asp-action="CrearUsuario" method="post">
+    <div>
+        <label>Nombre de usuario:</label>
+        <input type="text" name="nuevoUsuario" required />
+    </div>
+    <button type="submit">Agregar Usuario</button>
+</form>
+
+<h3>Usuarios en el sistema</h3>
+<ul>
+    @foreach (var usuario in Model)
+    {
+        <li>
+            @usuario
+            
+            <form asp-action="EliminarUsuario" method="post" style="display:inline;">
+                <input type="hidden" name="usuario" value="@usuario" />
+                <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</button>
+            </form>
+        </li>
+    }
+</ul>
+
+<a href="@Url.Action("MenuAdmin","Home")">Volver a la Página Principal</a>

@@ -1,0 +1,57 @@
+﻿body {
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    background-color: #343a40;
+}
+
+.sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+
+.sidebar .nav-link {
+    font-size: 1.1rem;
+    padding: 15px;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+    .sidebar .nav-link i {
+        margin-right: 10px;
+    }
+
+    /* Hover effect for sidebar items */
+    .sidebar .nav-link:hover {
+        background-color: #495057;
+        color: white;
+    }
+
+/* Main content */
+.table {
+    margin-top: 20px;
+}
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+/* Buttons in table actions */
+.btn-sm {
+    margin-right: 5px;
+}
+
+/* Ensuring fluid layout with sidebar and main content */
+.container-fluid {
+    padding-left: 0;
+}
+
+.main-content {
+    margin-left: 250px; /* Adjust this if your sidebar width changes */
+    padding: 20px;
+}

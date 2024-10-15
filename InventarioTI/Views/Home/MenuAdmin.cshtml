@@ -1,0 +1,133 @@
+﻿@{
+    var usuario = ViewBag.Usuario ?? "Usuario";
+    var rol = ViewBag.Rol ?? "Rol";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title> <!--Menú administrador-->
+    <!-- CSS de FontAwesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Archivo CSS de estilos del sidebar -->
+    <link rel="stylesheet" href="~/css/sidebar.css" />
+    <!-- Estilos personalizados -->
+    <style>
+        /* Estilo para el nuevo header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2c3e50; /* Fondo oscuro similar al dashboard */
+            color: white;
+            padding: 10px 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 50px;
+            margin-right: 20px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .header-user-details {
+            text-align: right;
+        }
+
+            .header-user-details h2 {
+                font-size: 18px;
+                margin: 0;
+            }
+
+            .header-user-details p {
+                margin: 0;
+                font-size: 14px;
+                color: #bdc3c7; /* Un color gris claro */
+            }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Menú lateral -->
+        <aside class="sidebar close">
+            <!-- Logo o Información de Usuario -->
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <i class="fas fa-user-circle user-icon"></i>
+                    <div class="user-details">
+                        <h2>Miranda</h2> <!-- Nombre de usuario estático //prueba usuario administrador -->
+                        <p>Administrador</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de ítems del menú -->
+            <ul class="menu-items">
+                <li><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> Resúmenes</a></li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="@Url.Action("Dashboard", "Home")">
+                        <i class="fas fa-box-open"></i> Inventario
+                    </a>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-cog"></i> Configuración</a>
+                    <ul>
+                        <li><a href="@Url.Action("Configuracion", "Catalogo")">Administración de Usuarios</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fas fa-th-list"></i> Catálogos</a>
+                    <ul>
+                        <li><a href="@Url.Action("Indexado", "Catalogo")">Departamento</a></li>
+                        <li><a href="@Url.Action("Empresa", "Catalogo")">Empresa</a></li>
+                        <li><a href="@Url.Action("Marca", "Catalogo")">Marca</a></li>
+                        <li><a href="@Url.Action("Zona", "Catalogo")">Zona</a></li>
+                        <li><a href="@Url.Action("Puestos", "Catalogo")">Puesto</a></li>
+                    </ul>
+                </li>
+                <!-- Enlace para cerrar sesión -->
+                <li>
+                    <a asp-controller="Account" asp-action="Logout">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </li>
+                <li><a href="#" id="darkModeToggle"><i class="fas fa-moon"></i> Modo Oscuro</a></li> <!-- icono modo oscuro -->
+            </ul>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <div class="main-content">
+            <header class="header">
+                <div class="header-content">
+                    <img src="~/images/login.png" alt="Logo de la empresa" class="header-logo"> 
+                    <div class="header-title">Panel de Administración</div>
+                </div>
+            
+            </header>
+
+            <main class="content">
+                <p>Bienvenido al panel de administración, @usuario (@rol)</p> <!--toma el nombre de usuario y el rol asignado-->
+            </main>
+        </div>
+    </div>
+    <!-- JavaScript para habilitar el modo oscuro -->
+    <script src="~/js/sidebar.js"></script>
+</body>
+</html>
+
+
+
+

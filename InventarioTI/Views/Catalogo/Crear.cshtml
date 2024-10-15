@@ -1,0 +1,19 @@
+﻿@model InventarioTI.Models.CatalogoDpto
+
+@{
+    ViewData["Title"] = "Crear nuevo Departamento";
+}
+
+<h2>Agregar Nuevo Departamento</h2>
+
+<form asp-action="Crear" method="post">
+    <div class="form-group">
+        <label for="Nombre">Nombre</label>
+        <input asp-for="Departamento" class="form-control" />
+        <span asp-validation-for="Departamento" class="text-danger"></span>
+    </div>
+    <!--ID departamento se genera automaticamente ????-->
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+
+<button> href="@Url.Action("Index")">Volver al Catálogo</button>
