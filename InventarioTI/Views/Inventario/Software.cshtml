@@ -1,0 +1,180 @@
+﻿@model List<Inventario>
+
+@{
+    ViewData["Title"] = "Software";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software</title>
+    <!-- CSS for Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+            .sidebar .nav-link {
+                font-size: 1.1rem;
+                padding: 15px;
+                color: #ffffff;
+                text-decoration: none;
+            }
+
+                .sidebar .nav-link:hover {
+                    background-color: #495057;
+                }
+
+        .table {
+            margin-top: 20px;
+        }
+
+            .table th, .table td {
+                vertical-align: middle;
+            }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Inicio", "Inventario")">
+                                <i class="fas fa-home"></i> Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="fas fa-laptop"></i> Software
+                            </a>
+                        </li>
+                        <!-- Additional menu items if needed -->
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-laptop"></i> Software</h1>
+                    <a href="@Url.Action("Inicio", "Inventario")" class="btn btn-secondary">Regresar a Inicio</a>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Clave</th>
+                                <th>Descripción</th>
+                                <th>Tipo</th>
+                                <th>Fecha de Compra</th>
+                                <th>Precio Unitario</th>
+                                <th>Precio Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var software in Model)
+                            {
+                                <tr>
+                                    <td>@software.Clave</td>
+                                    <td>@software.Descripcion</td>
+                                    <td>@software.Tipo</td>
+                                    <td>@software.FechaC</td>
+                                    <td>@software.PrecioUnitario</td>
+                                    <td>@software.PrecioTotal</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" onclick="openEditModal('@software.Clave', '@software.Descripcion', '@software.Tipo', '@software.FechaC', @software.PrecioUnitario, @software.PrecioTotal)">
+                                            Modificar
+                                        </button>
+                                        <form asp-action="EliminarSoftware" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@software.Clave" />
+                                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este software?');">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Modificar -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Modificar Software</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form asp-action="ModificarSoftware" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" id="editId" name="Clave" />
+                        <div class="form-group">
+                            <label for="editDescripcion">Descripción</label>
+                            <input type="text" id="editDescripcion" name="Descripcion" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="editTipo">Tipo</label>
+                            <input type="text" id="editTipo" name="Tipo" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="editFechaCompra">Fecha de Compra</label>
+                            <input type="date" id="editFechaCompra" name="FechaCompra" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="editPrecioUnitario">Precio Unitario</label>
+                            <input type="number" id="editPrecioUnitario" name="PrecioUnitario" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="editPrecioTotal">Precio Total</label>
+                            <input type="number" id="editPrecioTotal" name="PrecioTotal" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS for Bootstrap and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function openEditModal(clave, descripcion, tipo, fechaCompra, precioUnitario, precioTotal) {
+            document.getElementById('editId').value = clave;
+            document.getElementById('editDescripcion').value = descripcion;
+            document.getElementById('editTipo').value = tipo;
+            document.getElementById('editFechaCompra').value = fechaCompra;
+            document.getElementById('editPrecioUnitario').value = precioUnitario;
+            document.getElementById('editPrecioTotal').value = precioTotal;
+            $('#editModal').modal('show');
+        }
+    </script>
+</body>
+</html>

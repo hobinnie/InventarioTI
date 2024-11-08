@@ -1,4 +1,4 @@
-﻿
+﻿@model List<CatalogoEmpresa>
 
 @{
     ViewData["Title"] = "Empresa";
@@ -56,42 +56,69 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
-                <div class="sidebar-sticky">
-                    <ul class="nav flex-column">
-                        <li><a href="@Url.Action("MenuAdmin", "Home")" class="nav-link"><i class="fas fa-home"></i> Inicio</a></li>
-                    </ul>
-                </div>
-            </nav>
-
+            
             <!-- Main Content -->
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2"><i class="fas fa-building"></i> Empresas</h1>
                     <div>
-                        <a class="btn btn-primary" href="@Url.Action("CrearEmpresa", "Catalogo")">Crear Nueva Empresa</a>
-                    </div>
-                </div>
-
-                <!-- Search Bar -->
-                <div class="input-group w-25 mb-3">
-                    <input type="text" class="form-control" placeholder="Buscar...">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button">
-                            <i class="fas fa-search"></i>
+                        <a class="btn btn-primary" href="@Url.Action("MenuAdmin", "Home")" role="button">Inicio</a>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            Agregar nueva Empresa
                         </button>
                     </div>
                 </div>
 
-                <!-- Filter Dropdown -->
-                <div class="dropdown mb-3">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown">
-                        Filtrar
+                <!-- Modal Crear -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Nueva Empresa</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form asp-action="CrearEmpresa" method="post">
+                                <div class="modal-body">
+
+                                    <div class="form-group">
+                                        <label for="Clave">Clave</label>
+                                        <input name="Empresa" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Descripcion">Descripción</label>
+                                        <input name="desc" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Marca">Marca</label>
+                                        <input name="marcafk" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Zona">Zona</label>
+                                        <input name="zonafk" class="form-control" />
+                                    </div>
+
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Otros catalogos
                     </button>
-                    <div class="dropdown-menu" aria-labelledby="filterDropdown">
-                        <a class="dropdown-item" href="#">Nombre</a>
-                        <a class="dropdown-item" href="#">Rol</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="@Url.Action("Marca", "Catalogo")">Marcas</a>
+                        <a class="dropdown-item" href="@Url.Action("Zona", "Catalogo")">Zonas</a>
+                        <a class="dropdown-item" href="@Url.Action("Puestos", "Catalogo")">Puestos</a>
+                        <a class="dropdown-item" href="@Url.Action("Indexado", "Catalogo")">Departamentos</a>
                     </div>
                 </div>
 
@@ -101,8 +128,10 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Nombre</th>
-                                <th>Puesto</th>
+                                <th>Clave</th>
+                                <th>Descripción</th>
+                                <th>Marca</th>
+                                <th>Zona</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -110,16 +139,17 @@
                             @foreach (var empresa in Model)
                             {
                                 <tr>
-                                    <td>@empresa.Id</td>
-                                    <td>@empresa.Nombre</td>
-                                    <td>@empresa.Puesto</td>
+                                    <td>@empresa.IdEmpresa</td>
+                                    <td>@empresa.Clave</td>
+                                    <td>@empresa.Descripcion</td>
+                                    <td>@empresa.FkIdMarca</td>
+                                    <td>@empresa.FkIdZona</td>
                                     <td>
-                                        <a class="btn btn-sm btn-primary" href="@Url.Action("EditarEmpresa", "Catalogo", new { id = empresa.Id })">Editar</a>
                                         <form asp-action="EliminarEmpresa" method="post" style="display:inline;">
-                                            <input type="hidden" name="id" value="@empresa.Id" />
+                                            <input type="hidden" name="id" value="@empresa.IdEmpresa" />
                                             <button class="btn btn-sm btn-danger" type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar esta empresa?');">Eliminar</button>
                                         </form>
-                                        <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#ModificarModal" data-id="@empresa.Id">Modificar</button>
+                                        <button class="btn btn-sm btn-warning" onclick="updateemp(event,'@empresa.Clave','@empresa.Descripcion','@empresa.FkIdMarca','@empresa.FkIdMarca',@empresa.IdEmpresa)">Modificar</button>
                                     </td>
                                 </tr>
                             }
@@ -131,7 +161,7 @@
     </div>
 
     <!-- Modal for Modificar -->
-    <div class="modal fade" id="ModificarModal" tabindex="-1" role="dialog" aria-labelledby="ModificarModalLabel" aria-hidden="true">
+    <div class="modal fade" id="ModificarEmpresa" tabindex="-1" role="dialog" aria-labelledby="ModificarModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -141,23 +171,33 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Aquí puedes agregar un formulario para modificar la empresa -->
-                    <form method="post" action="@Url.Action("ModificarEmpresa", "Catalogo")">
-                        <input type="hidden" name="id" id="modalId" />
+                <form asp-action="Editar" method="post">
+                    <input type="hidden" name="IdEmpresa" id="IdEmpresa" />
+                    <div class="modal-body">
+
                         <div class="form-group">
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required />
+                            <label for="Clave">Clave</label>
+                            <input name="Empresa" class="form-control" id="Empresa" />
                         </div>
-                        <div class="form-group">
-                            <label for="puesto">Puesto:</label>
-                            <input type="text" class="form-control" id="puesto" name="puesto" required />
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                        </div>
-                    </form>
-                </div>
+                            <div class="form-group">
+                                <label for="Descripcion">Descripcion</label>
+                                <input name="Empresa" class="form-control" id="Empresa" />
+                            </div>
+                            <div class="form-group">
+                                <label for="FkIdMarca">Marca</label>
+                                <input name="Empresa" class="form-control" id="Empresa" />
+                            </div>
+                            <div class="form-group">
+                                <label for="FkIdZona">Zona</label>
+                                <input name="Empresa" class="form-control" id="Empresa" />
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
             </div>
         </div>
     </div>
@@ -168,15 +208,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
     <script>
-        $('#ModificarModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Botón que abrió el modal
-            var id = button.data('id'); // Extraer información del atributo data-* del botón
-            var modal = $(this);
-            modal.find('#modalId').val(id);
-            // Puedes añadir más lógica aquí para cargar el resto de la información si es necesario
-        });
+        function updateemp(e, clav, descripcion, fkmarca, fkzona, id) {
+            const evento = e.target;
+            const clave = document.getElementById("Clave");
+            const descripcion = document.getElementById("Descripcion");
+            const fkmarca = document.getElementById("FkIdMarca");
+            const fkzona = document.getElementById("FkIdZona");
+            const idemp = document.getElementById("IdEmpresa");
+            clav.value = clave;
+            descripcion.value = descripcion;
+            fkmarca.value = fkmarca;
+            fkzona.value = fkzona;
+            idemp.value = id;
+            $('#ModificarEmpresa').modal('show');
+
+        }
     </script>
 </body>
 </html>

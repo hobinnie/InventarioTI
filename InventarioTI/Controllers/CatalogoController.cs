@@ -8,27 +8,26 @@ namespace InventarioTI.Controllers
 {
     public class CatalogoController : Controller
     {
-        // Listas estáticas para almacenar datos
-        private static List<Departamento> departamentos = new List<Departamento>();
-        private static List<string> empresas = new List<string>();
-        private static List<string> marcas = new List<string>();
-        private static List<string> zonas = new List<string>();
-        private static List<string> puestos = new List<string>();
-        private static List<string> usuarios = new List<string>();
+        private readonly GestionActivosDBContext _dbContext;
+        public CatalogoController(GestionActivosDBContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         // Métodos para Departamentos
         public IActionResult Indexado()
         {
-            return View(departamentos);
+            var query = _dbContext.CatalogoDptos.ToList();
+            return View(query);
         }
 
         [HttpPost]
-        public IActionResult Crear(Departamento departamento)
+        public IActionResult Crear(CatalogoDpto model)
         {
             if (ModelState.IsValid)
             {
-                departamento.Id = departamentos.Count + 1; // Asignar ID
-                departamentos.Add(departamento);
+                _dbContext.CatalogoDptos.Add(model);
+                _dbContext.SaveChanges();
                 return RedirectToAction("Indexado");
             }
             return RedirectToAction("Indexado"); // Si hay algún error, sigue mostrando la misma vista
@@ -36,204 +35,343 @@ namespace InventarioTI.Controllers
 
         public IActionResult Editar(int id)
         {
-            var departamento = departamentos.FirstOrDefault(d => d.Id == id);
+            var departamento = _dbContext.CatalogoDptos.Find(id); // Buscar el departamento por su ID
             if (departamento == null)
             {
-                return NotFound();
+                return NotFound(); // Retornar una vista de error si no se encuentra el departamento
             }
-            return View(departamento);
+            return View(departamento); // Pasar el modelo a la vista para que sea editado
         }
 
+        // Recibir los cambios y actualizarlos en la base de datos
         [HttpPost]
-        public IActionResult Editar(Departamento departamento)
+        public IActionResult Editar(CatalogoDpto model)
         {
             if (ModelState.IsValid)
             {
-                var existingDepartamento = departamentos.FirstOrDefault(d => d.Id == departamento.Id);
-                if (existingDepartamento != null)
+                var departamento = _dbContext.CatalogoDptos.Find(model.IdDpto); // Encontrar el departamento por ID
+                if (departamento == null)
                 {
-                    existingDepartamento.nombreDepartamento = departamento.nombreDepartamento;
+                    return NotFound();
                 }
-                return RedirectToAction("Indexado");
+
+                // Actualizar el nombre del departamento
+                departamento.Departamento = model.Departamento;
+
+                _dbContext.CatalogoDptos.Update(departamento); // Marcar el objeto como modificado
+                _dbContext.SaveChanges(); // Guardar los cambios en la base de datos
+
+                return RedirectToAction("Indexado"); // Redirigir a la vista principal después de modificar
             }
-            return View(departamento);
+            return View(model); // Si hay errores de validación, seguir mostrando el formulario
         }
 
         public IActionResult Eliminar(int id)
         {
-            var departamento = departamentos.FirstOrDefault(d => d.Id == id);
-            if (departamento != null)
-            {
-                departamentos.Remove(departamento);
-            }
+            var query = _dbContext.CatalogoDptos.Find(id);
+            _dbContext.CatalogoDptos.Remove(query);
+            _dbContext.SaveChanges();
             return RedirectToAction("Indexado");
         }
 
-        // Métodos para Empresas
+        // Métodos para Empresa
         public IActionResult Empresa()
         {
-            return View(empresas); // Pasa la lista de empresas a la vista
+            var query = _dbContext.CatalogoEmpresas.ToList();
+            return View(query);
         }
 
         [HttpPost]
-        public IActionResult CrearEmpresa(string nuevaEmpresa)
+        public IActionResult CrearEmpresa(CatalogoEmpresa model)
         {
-            if (!string.IsNullOrWhiteSpace(nuevaEmpresa))
+            if (ModelState.IsValid)
             {
-                empresas.Add(nuevaEmpresa); // Añade la nueva empresa a la lista
+                _dbContext.CatalogoEmpresas.Add(model);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Empresa");
             }
-            return RedirectToAction("Empresa");
+            return RedirectToAction("Empresa"); // Si hay algún error, sigue mostrando la misma vista
         }
 
-        public IActionResult EliminarEmpresa(string empresa)
+        public IActionResult EditarEmpresa(int id)
         {
-            empresas.Remove(empresa); // Elimina la empresa de la lista
-            return RedirectToAction("Empresa");
+            var empresa = _dbContext.CatalogoEmpresas.Find(id); // 
+            if (empresa == null)
+            {
+                return NotFound(); // Retornar una vista de error si no se encuentra el departamento
+            }
+            return View(empresa); // Pasar el modelo a la vista para que sea editado
         }
 
+        // Recibir los cambios y actualizarlos en la base de datos
         [HttpPost]
-        public IActionResult ModificarEmpresa(string antiguaEmpresa, string nuevaEmpresa)
+        public IActionResult EditarEmpresa(CatalogoEmpresa model)
         {
-            int index = empresas.IndexOf(antiguaEmpresa);
-            if (index != -1 && !string.IsNullOrWhiteSpace(nuevaEmpresa))
+            if (ModelState.IsValid)
             {
-                empresas[index] = nuevaEmpresa; // Modifica la empresa existente
+                var empresa = _dbContext.CatalogoEmpresas.Find(model.IdEmpresa); // 
+                if (empresa == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el nombre del departamento
+                empresa.Clave = model.Clave;
+
+
+                _dbContext.CatalogoEmpresas.Update(empresa); // Marcar el objeto como modificado
+                _dbContext.SaveChanges(); // Guardar los cambios en la base de datos
+
+                return RedirectToAction("Empresa"); // Redirigir a la vista principal después de modificar
             }
+            return View(model); // Si hay errores de validación, seguir mostrando el formulario
+        }
+
+        public IActionResult EliminarEmpresa(int id)
+        {
+            var query = _dbContext.CatalogoEmpresas.Find(id);
+            _dbContext.CatalogoEmpresas.Remove(query);
+            _dbContext.SaveChanges();
             return RedirectToAction("Empresa");
         }
+
+
 
         // Métodos para Marcas
         public IActionResult Marca()
         {
-            return View(marcas); // Pasa la lista de marcas a la vista
+            var query = _dbContext.CatalogoMarcas.ToList();
+            return View(query);
         }
 
         [HttpPost]
-        public IActionResult CrearMarca(string nuevaMarca)
+        public IActionResult CrearMarca(CatalogoMarca model)
         {
-            if (!string.IsNullOrWhiteSpace(nuevaMarca))
+            if (ModelState.IsValid)
             {
-                marcas.Add(nuevaMarca); // Añade la nueva marca a la lista
+                _dbContext.CatalogoMarcas.Add(model);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Marca");
             }
-            return RedirectToAction("Marca");
+            return RedirectToAction("Marca"); // Si hay algún error, sigue mostrando la misma vista
         }
 
-        public IActionResult EliminarMarca(string marca)
+        public IActionResult EditarMarca(int id)
         {
-            marcas.Remove(marca); // Elimina la marca de la lista
-            return RedirectToAction("Marca");
+            var marca = _dbContext.CatalogoMarcas.Find(id); // Buscar el departamento por su ID
+            if (marca == null)
+            {
+                return NotFound(); // Retornar una vista de error si no se encuentra el departamento
+            }
+            return View(marca); // Pasar el modelo a la vista para que sea editado
         }
 
+        // Recibir los cambios y actualizarlos en la base de datos
         [HttpPost]
-        public IActionResult ModificarMarca(string antiguaMarca, string nuevaMarca)
+        public IActionResult EditarMarca(CatalogoMarca model)
         {
-            int index = marcas.IndexOf(antiguaMarca);
-            if (index != -1 && !string.IsNullOrWhiteSpace(nuevaMarca))
+            if (ModelState.IsValid)
             {
-                marcas[index] = nuevaMarca; // Modifica la marca existente
+                var marca = _dbContext.CatalogoMarcas.Find(model.IdMarca); // Encontrar el departamento por ID
+                if (marca == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el nombre del departamento
+                marca.Marca = model.Marca;
+
+                _dbContext.CatalogoMarcas.Update(marca); // Marcar el objeto como modificado
+                _dbContext.SaveChanges(); // Guardar los cambios en la base de datos
+
+                return RedirectToAction("Marca"); // Redirigir a la vista principal después de modificar
             }
+            return View(model); // Si hay errores de validación, seguir mostrando el formulario
+        }
+        public IActionResult EliminarMarca(int id)
+        {
+            var query = _dbContext.CatalogoMarcas.Find(id);
+            _dbContext.CatalogoMarcas.Remove(query);
+            _dbContext.SaveChanges();
             return RedirectToAction("Marca");
         }
 
         // Métodos para Zonas
         public IActionResult Zona()
         {
-            return View(zonas); // Pasa la lista de zonas a la vista
+            var query = _dbContext.CatalogoZonas.ToList();
+            return View(query);
         }
 
         [HttpPost]
-        public IActionResult CrearZona(string nuevaZona)
+
+        public IActionResult CrearZona(CatalogoZona model)
         {
-            if (!string.IsNullOrWhiteSpace(nuevaZona))
+            if (ModelState.IsValid)
             {
-                zonas.Add(nuevaZona); // Añade la nueva zona a la lista
+                _dbContext.CatalogoZonas.Add(model);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Zona");
             }
             return RedirectToAction("Zona");
         }
-
-        public IActionResult EliminarZona(string zona)
+        public IActionResult ModificarZona(int id)
         {
-            zonas.Remove(zona); // Elimina la zona de la lista
-            return RedirectToAction("Zona");
+            var zona = _dbContext.CatalogoZonas.Find(id); // Buscar el departamento por su ID
+            if (zona == null)
+            {
+                return NotFound(); // Retornar una vista de error si no se encuentra el departamento
+            }
+            return View(zona);
         }
 
         [HttpPost]
-        public IActionResult ModificarZona(string antiguaZona, string nuevaZona)
+        public IActionResult ModificarZona(CatalogoZona model)
         {
-            int index = zonas.IndexOf(antiguaZona);
-            if (index != -1 && !string.IsNullOrWhiteSpace(nuevaZona))
+            if (ModelState.IsValid)
             {
-                zonas[index] = nuevaZona; // Modifica la zona existente
+                var zona = _dbContext.CatalogoZonas.Find(model.IdZona); // Encontrar el departamento por ID
+                if (zona == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el nombre del departamento
+                zona.Zona = model.Zona;
+
+                _dbContext.CatalogoZonas.Update(zona); // Marcar el objeto como modificado
+                _dbContext.SaveChanges(); // Guardar los cambios en la base de datos
+
+                return RedirectToAction("Zona"); // Redirigir a la vista principal después de modificar
             }
+            return View(model); // Si hay errores de validación, seguir mostrando el formulario
+        }
+        public IActionResult EliminarZona(int id)
+        {
+            var query = _dbContext.CatalogoZonas.Find(id);
+            _dbContext.CatalogoZonas.Remove(query);
+            _dbContext.SaveChanges();
             return RedirectToAction("Zona");
         }
 
         // Métodos para Puestos
         public IActionResult Puestos()
         {
-            return View(puestos); // Pasa la lista de puestos a la vista
+            var query = _dbContext.CatalogoPuestos.ToList();
+            return View(query);
         }
 
         [HttpPost]
-        public IActionResult CrearPuesto(string nuevoPuesto)
+        public IActionResult CrearPuesto(CatalogoPuesto model)
         {
-            if (!string.IsNullOrWhiteSpace(nuevoPuesto))
+            if (ModelState.IsValid)
             {
-                puestos.Add(nuevoPuesto); // Añade la nueva zona a la lista
+                _dbContext.CatalogoPuestos.Add(model);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Puestos");
             }
             return RedirectToAction("Puestos");
         }
-
-        public IActionResult EliminarPuesto(string puesto)
+        public IActionResult EditarPuesto(int id)
         {
-            puestos.Remove(puesto); // Elimina la zona de la lista
-            return RedirectToAction("Puestos");
+            var puesto = _dbContext.CatalogoPuestos.Find(id); // Buscar el departamento por su ID
+            if (puesto == null)
+            {
+                return NotFound(); // Retornar una vista de error si no se encuentra el departamento
+            }
+            return View(puesto); // Pasar el modelo a la vista para que sea editado
         }
 
-        //[HttpPost]
-        public IActionResult ModificarPuesto(string antiguoPuesto, string nuevoPuesto)
+        // Recibir los cambios y actualizarlos en la base de datos
+        [HttpPost]
+        public IActionResult EditarPuesto(CatalogoPuesto model)
         {
-            int index = puestos.IndexOf(antiguoPuesto);
-            if (index != -1 && !string.IsNullOrWhiteSpace(nuevoPuesto))
+            if (ModelState.IsValid)
             {
-                puestos[index] = nuevoPuesto; // Modifica la zona existente
+                var puesto = _dbContext.CatalogoPuestos.Find(model.IdEmpleado); // Encontrar el departamento por ID
+                if (puesto == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el nombre del departamento
+                puesto.Puesto = model.Puesto;
+
+                _dbContext.CatalogoPuestos.Update(puesto); // Marcar el objeto como modificado
+                _dbContext.SaveChanges(); // Guardar los cambios en la base de datos
+
+                return RedirectToAction("Puestos"); // Redirigir a la vista principal después de modificar
             }
+            return View(model); // Si hay errores de validación, seguir mostrando el formulario
+        }
+
+        public IActionResult EliminarPuesto(int id)
+        {
+            var query = _dbContext.CatalogoPuestos.Find(id);
+            _dbContext.CatalogoPuestos.Remove(query);
+            _dbContext.SaveChanges();
             return RedirectToAction("Puestos");
         }
 
         // Métodos para Administración de Usuarios
         public IActionResult Configuración()
         {
-            return View(usuarios); // Pasa la lista de empresas a la vista
+            var query = _dbContext.Usuarios.ToList();
+            return View(query);
         }
 
         [HttpPost]
-        public IActionResult CrearUsuario(string nuevoUsuario)
+        public IActionResult Crearusuario(Usuario model)
         {
-            if (!string.IsNullOrWhiteSpace(nuevoUsuario))
+            if (ModelState.IsValid)
             {
-                usuarios.Add(nuevoUsuario); // Añade el nuevo usuario a la lista
+                _dbContext.Usuarios.Add(model);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Configuración");
             }
-            return RedirectToAction("Configuración");
+            return RedirectToAction("Configuración"); // Si hay algún error, sigue mostrando la misma vista
         }
 
-        public IActionResult EliminarUsuario(string usuario)
+        public IActionResult Editarusuario(int id)
         {
-            empresas.Remove(usuario); // Elimina el usuario de la lista
-            return RedirectToAction("Configuración");
+            var usuario = _dbContext.Usuarios.Find(id); // Buscar el departamento por su ID
+            if (usuario == null)
+            {
+                return NotFound(); // Retornar una vista de error si no se encuentra el departamento
+            }
+            return View(usuario); // Pasar el modelo a la vista para que sea editado
         }
 
+        // Recibir los cambios y actualizarlos en la base de datos
         [HttpPost]
-        public IActionResult ModificarUsuario(string antiguoUsuario, string nuevoUsuario)
+        public IActionResult EditarUsuario(Usuario model)
         {
-            int index = empresas.IndexOf(antiguoUsuario);
-            if (index != -1 && !string.IsNullOrWhiteSpace(nuevoUsuario))
+            if (ModelState.IsValid)
             {
-                empresas[index] = nuevoUsuario; // Modifica el usuario existente
+                var usuario = _dbContext.Usuarios.Find(model.IdUsuario); // Encontrar el departamento por ID
+                if (usuario == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar el nombre del departamento
+                usuario.NombreUsuario = model.NombreUsuario;
+
+                _dbContext.Usuarios.Update(usuario); // Marcar el objeto como modificado
+                _dbContext.SaveChanges(); // Guardar los cambios en la base de datos
+
+                return RedirectToAction("Configuración"); // Redirigir a la vista principal después de modificar
             }
+            return View(model); // Si hay errores de validación, seguir mostrando el formulario
+        }
+
+        public IActionResult EliminarUsuario(int id)
+        {
+            var query = _dbContext.Usuarios.Find(id);
+            _dbContext.Usuarios.Remove(query);
+            _dbContext.SaveChanges();
             return RedirectToAction("Configuración");
         }
+
     }
 }
-
-

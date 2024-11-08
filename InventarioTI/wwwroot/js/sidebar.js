@@ -7,7 +7,7 @@ const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-s
 // Al cargar la página, aplicamos el modo oscuro si es necesario
 if (localStorage.getItem('darkMode') === 'enabled' || userPrefersDark) {
     document.body.classList.add('dark-mode');
-}/
+}
 
 // Evento al hacer clic en el botón de alternar
 darkModeToggle.addEventListener('click', () => {
